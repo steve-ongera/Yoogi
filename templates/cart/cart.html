@@ -1,0 +1,264 @@
+{% extends "base.html" %} 
+{% load static %} 
+<title>{% block title %}Yoogi | cart {% endblock title %}</title>  
+{% load humanize %} 
+{% block content %}
+<!-- ========== MAIN CONTENT ========== -->
+<div class="container content-space-1 content-space-lg-2">
+  <div class="row">
+    <div class="col-lg-8 mb-7 mb-lg-0">
+      <!-- Heading -->
+      <div class="d-flex justify-content-between align-items-end border-bottom pb-3 mb-7">
+        <h1 class="h3 mb-0">Shopping Cart</h1>
+        <span>{{total_quantity}} Items</span>
+      </div>
+      <!-- End Heading -->
+      
+      <!-- Form -->
+      <form>
+        <!-- List Group -->
+        <ul class="list-group list-group-flush list-group-no-gutters mb-5">
+          <!-- Item -->
+          {% for prod in cart_items %}
+          <li class="list-group-item">
+            <div class="d-flex">
+              <div class="flex-shrink-0">
+                <img
+                  class="avatar avatar-xl avatar-4x3"
+                  src="{{ prod.prod_obj.product_image_related.all.first.image.url }}"
+                  alt="Image Description"
+                />
+              </div>
+              <div class="flex-grow-1 ms-3">
+                <div class="row">
+                  <div class="col-sm-7 mb-3 mb-sm-0">
+                    <h5>
+                      <a class="text-dark" href="{% url 'shop:detail' slug=prod.prod_obj.slug %}">{{prod.prod_obj.title}}</a>
+                    </h5>                      
+                    <div class="d-grid gap-1">
+                      <div class="text-body">
+                        <span class="small">Category:</span>
+                        <span class="fw-semibold small">
+                          {% for cat in prod.prod_obj.category.all %}
+                          {{cat}}
+                          {% if not forloop.last %}, {% endif %}
+                          {% endfor %}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="col-sm-3">
+                    <div class="row">
+                      <div class="col-auto">
+                        <!-- Select -->
+                        <select class="form-select form-select-sm mb-3"
+                          onchange="changeprodquantity(`{{ prod.product_id }}`,this.value)">
+                          {% with ''|center:prod.prod_obj.stock as range %}
+                          {% for _ in range %}
+                          <option value="{{ forloop.counter }}"
+                            {% if forloop.counter == prod.quantity %} selected {% endif %}>
+                            {{ forloop.counter }}
+                          </option>
+                          {% endfor %}
+                          {% endwith %}
+                        </select>
+                        <!-- End Select -->
+                      </div>
+
+                      <div class="col-auto">
+                        <div class="d-grid gap-2 d-flex justify-content-between">
+                          <button class="btn btn-sm btn-icon text-danger border-0 mx-1" onclick="delprod(`{{ prod.product_id }}`)">
+                            <i class="bi-trash ms-1"></i> Remove
+                          </button>
+                        </div>
+                      </div>
+                      <!-- End Col -->
+                    </div>
+                    <!-- End Row -->
+                  </div>
+                  <!-- End Col -->
+
+                  <div class="col-4 col-sm-2 d-none d-sm-inline-block text-right">
+                    {% if prod.prod_obj.discount_percent %}
+                    <span class="text-body ms-1"><del>{{prod.prod_obj.price|intcomma}}</del></span>
+                    {% endif %}
+                    <span class="h5 d-block mb-1">{{prod.prod_obj.offer|intcomma}}</span>
+                    <p>KES</p>
+                  </div>
+                  <!-- End Col -->
+                </div>
+                <!-- End Row -->
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+          <!-- End Item -->
+        </ul>
+        <!-- End List Group -->
+
+        <div class="d-sm-flex justify-content-end">
+          <a class="link" href="{% url 'shop:list_grid' %}">
+            Continue Shopping <i class="bi-chevron-left small ms-1"></i>
+          </a>
+        </div>
+      </form>
+      <!-- End Form -->
+    </div>
+    <!-- End Col -->
+
+    <div class="col-lg-4">
+      <div class="ps-lg-4">
+        <!-- Card -->
+        <div class="card card-sm shadow-sm mb-4">
+          <div class="card-body">
+            <div class="border-bottom pb-4 mb-4">
+              <h3 class="card-header-title">Summary</h3>
+            </div>
+            <form>
+              <div class="d-grid gap-3 mb-4">
+                <dl class="row">
+                  <dt class="col-sm-6">Tax</dt>
+                  <dd class="col-sm-12 text-sm-end mb-0">
+                    Including 9% at checkout
+                  </dd>
+                </dl>
+                <!-- End Row -->
+                
+                <dl class="row">
+                  <dt class="col-sm-6">Total</dt>
+                  <dd class="col-sm-12 text-sm-end mb-0">{{total_price|intcomma}} KES</dd>
+                </dl>
+                <!-- End Row -->
+              </div>
+              
+              <div class="d-grid" style="margin-bottom: 10px;">
+                <a class="btn btn-primary btn-lg" href="{% url 'order:checkout' %}">Place Order</a>
+              </div>
+              <div class="d-grid">
+                <button class="btn btn-danger btn-lg" onclick="clearProducts()">Clear Cart</button>
+              </div>
+            </form>
+          </div>
+          <!-- End Card -->
+        </div>
+
+        <!-- Media -->
+        <div class="d-flex align-items-center">
+          <div class="flex-shrink-0">
+            <div class="svg-icon svg-icon-sm text-primary">
+              <!-- SVG ICON HERE -->
+            </div>
+          </div>
+          <div class="flex-grow-1 ms-2">
+            <span class="small me-1">Do you need support?</span>
+            <a class="link small" href="{% url 'website:contact' %}">Submit a ticket.</a>
+          </div>
+        </div>
+        <!-- End Media -->
+      </div>
+    </div>
+    <!-- End Col -->
+  </div>
+  <!-- End Row -->
+</div>
+{% endblock content %}
+
+{% block extera-js %}
+  
+<!-- JS Implementing Plugins -->
+<script src="{% static '/js/vendor.min.js' %}"></script>
+
+<!-- JS Front -->
+<script src="{% static '/js/theme.min.js' %}"></script>
+
+<!-- JS Plugins Init. -->
+<script>
+  (function () {
+    // INITIALIZATION OF MEGA MENU
+    // =======================================================
+    new HSMegaMenu(".js-mega-menu", {
+      desktop: {
+        position: "left",
+      },
+    });
+
+    // INITIALIZATION OF SHOW ANIMATIONS
+    // =======================================================
+    new HSShowAnimation(".js-animation-link");
+
+    // INITIALIZATION OF BOOTSTRAP VALIDATION
+    // =======================================================
+    HSBsValidation.init(".js-validate", {
+      onSubmit: (data) => {
+        data.event.preventDefault();
+        alert("Submited");
+      },
+    });
+
+    // INITIALIZATION OF BOOTSTRAP DROPDOWN
+    // =======================================================
+    HSBsDropdown.init();
+
+    // INITIALIZATION OF GO TO
+    // =======================================================
+    new HSGoTo(".js-go-to");
+  })();
+</script>
+
+<script>
+  function delprod(product_id) {
+    $.ajax({
+    type: "POST",
+    url: "{% url 'cart:del-prod' %}",
+    data: {
+      'product_id': product_id,
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+    },
+    success: function(response){
+      console.log(response)
+      window.location.reload();
+    },
+    error: function(jqXHR,textStatus,errorThrown) {
+      console.log(response)
+    }
+  });
+  }
+
+  function changeprodquantity(product_id,quantity) {
+    $.ajax({
+    type: "POST",
+    url: "{% url 'cart:change-prod-quantity' %}",
+    data: {
+      'product_id': product_id,
+      'quantity': quantity,
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+    },
+    success: function(response){
+      console.log(response)
+      window.location.reload();
+    },
+    error: function(jqXHR,textStatus,errorThrown) {
+      console.log(response)
+    }
+  });
+  }
+  function clearProducts() {
+    $.ajax({
+    type: "POST",
+    url: "{% url 'cart:clear' %}",
+    data: {
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+    },
+    success: function(response){
+      console.log(response)
+      window.location.reload();
+    },
+    error: function(jqXHR,textStatus,errorThrown) {
+      console.log(response)
+    }
+  });
+  }
+</script>
+{% endblock extera-js %}
