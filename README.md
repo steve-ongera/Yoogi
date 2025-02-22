@@ -1,6 +1,6 @@
 # Yoogi E-commerce Platform
 
-![Yoogi E-commerce](https://placeholder.com/yoogi-banner-1200x300)
+![Yoogi E-commerce](https://github.com/steve-ongera/Yoogi/blob/main/Screenshots/store.PNG)
 
 A modern, Django-based e-commerce platform offering a seamless shopping experience with robust features and clean design.
 
