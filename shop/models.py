@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django_ckeditor_5.fields import CKEditor5Field
 from django.urls import reverse
+from django.utils.text import slugify
 
 
 class ProductStatus(models.IntegerChoices):
@@ -14,6 +15,11 @@ class CategoryModel(models.Model):
     slug = models.SlugField(allow_unicode=True, unique=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -43,6 +49,18 @@ class ProductModel(models.Model):
 
     class Meta:
         ordering = ("-created_date",)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title, allow_unicode=True)
+            slug = base_slug
+            num = 1
+            while ProductModel.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
 
     def offer(self):
         if self.discount_percent:

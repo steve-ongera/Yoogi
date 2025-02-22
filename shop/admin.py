@@ -7,21 +7,30 @@ from .models import (
 )
 
 
-@admin.register(ProductModel)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "title",
-        "price",
-        "discount_percent",
-        "stock",
-        "status",
-    )
+# @admin.register(ProductModel)
+# class ProductAdmin(admin.ModelAdmin):
+#     list_display = (
+#         "id",
+#         "title",
+#         "price",
+#         "discount_percent",
+#         "stock",
+#         "status",
+#     )
 
 
-@admin.register(CategoryModel)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "title")
+class ProductModelAdmin(admin.ModelAdmin):
+    list_display = ('title',  'price', 'stock', 'status', 'created_date')
+    prepopulated_fields = {'slug': ('title',)}  # Automatically generates slug from title
+
+admin.site.register(ProductModel, ProductModelAdmin)
+
+
+class CategoryModelAdmin(admin.ModelAdmin):
+    list_display = ('title', 'slug', 'created_date', 'updated_date')
+    prepopulated_fields = {'slug': ('title',)}  # Auto-populates slug from title
+
+admin.site.register(CategoryModel, CategoryModelAdmin)
 
 
 @admin.register(ProductImageModel)
