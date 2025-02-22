@@ -2,7 +2,7 @@
 
 ![Yoogi E-commerce](https://github.com/steve-ongera/Yoogi/blob/main/Screenshots/store.PNG)
 
-A modern, Django-based e-commerce platform offering a seamless shopping experience with robust features and clean design.
+Yoogi is A modern, Django-based e-commerce platform offering a seamless shopping experience with robust features and clean design.
 
 ## 🌟 Features
 
@@ -126,7 +126,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## 📞 Support
 
-For support, email support@yoogi.com or join our Slack channel.
+For support, email steveongera001@gmail.com or join our Slack channel.
 
 ## 🎉 Acknowledgments
 
@@ -145,4 +145,4 @@ For support, email support@yoogi.com or join our Slack channel.
 
 ---
 
-Made with ❤️ by the Yoogi team
+Made by Steve Ongera
